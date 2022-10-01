@@ -14,7 +14,7 @@ public class Room {
 
     @Column(nullable = false)
     private String color = "#ffffff";
-    private String icon;
+    private String icon = "";
     @Column(name = "read_token", length = 50, nullable = false)
     private String readToken = "";
 
