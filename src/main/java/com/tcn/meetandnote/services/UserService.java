@@ -5,7 +5,7 @@ import com.tcn.meetandnote.entity.User;
 
 public interface UserService {
     UserDTO save(User user);
-    UserDTO getUserByUsernameAndPassword(String username, String password);
+    UserDTO getUserByUsernameAndConvertDTO(String username);
     User getUserByUsername(String username);
 
     void delete(long id);

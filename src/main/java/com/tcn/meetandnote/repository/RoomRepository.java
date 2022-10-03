@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface RoomRepository extends JpaRepository<Room, Long> {
 
-    @Query("SELECT r FROM Room r WHERE r.fullPermissionToken = ?1")
-    Optional<Room> findByFullPermissionToken(String permissionToken);
+    @Query("SELECT r FROM Room r WHERE r.link = ?1 AND r.fullPermissionToken = ?2")
+    Optional<Room> findByLinkAndFullPermissionToken(String link, String permissionToken);
 
 }

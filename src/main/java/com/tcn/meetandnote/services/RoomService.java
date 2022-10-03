@@ -8,6 +8,6 @@ public interface RoomService {
     Room save(Room room);
     Room get(long id);
     List<Room> gets();
-    Room update(String fullPermissionToken, Room room);
-    void delete(String fullPermissionToken);
+    Room update(String link, String fullPermissionToken, Room room);
+    void delete(String link, String fullPermissionToken);
 }

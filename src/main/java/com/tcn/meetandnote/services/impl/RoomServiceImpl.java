@@ -21,11 +21,13 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Room save(Room room) {
         room = roomRepository.save(room);
-        String readToken = MD5Hashing.hash(room+"read");
-        String fullPermissionToken = MD5Hashing.hash(room+"full");
+        String link = MD5Hashing.hash(room.getId() + "");
+        String readToken = MD5Hashing.hash(room.getId()+"read");
+        String fullPermissionToken = MD5Hashing.hash(room.getId()+"full");
 
         room.setReadToken(readToken);
         room.setFullPermissionToken(fullPermissionToken);
+        room.setLink(link);
 
         return roomRepository.save(room);
     }
@@ -41,8 +43,8 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public Room update(String fullPermissionToken, Room room) {
-        Room db = getRoomByFullPermissionToken(fullPermissionToken);
+    public Room update(String link, String fullPermissionToken, Room room) {
+        Room db = getRoomByFullPermissionToken(link, fullPermissionToken);
         db.setColor(room.getColor());
         db.setIcon(room.getIcon());
         db.setTitle(room.getTitle());
@@ -50,8 +52,8 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public void delete(String fullPermissionToken) {
-        Room room = getRoomByFullPermissionToken(fullPermissionToken);
+    public void delete(String link, String fullPermissionToken) {
+        Room room = getRoomByFullPermissionToken(link, fullPermissionToken);
         roomRepository.delete(room);
     }
 
@@ -59,7 +61,8 @@ public class RoomServiceImpl implements RoomService {
         return roomRepository.findById(id).orElseThrow(() -> new NotFoundException("Not found room with id: " + id));
     }
 
-    private Room getRoomByFullPermissionToken(String fullPermissionToken) {
-        return roomRepository.findByFullPermissionToken(fullPermissionToken).orElseThrow(() -> new NotFoundException("Not found room with token: " + fullPermissionToken));
+    private Room getRoomByFullPermissionToken(String link, String fullPermissionToken) {
+        return roomRepository.findByLinkAndFullPermissionToken(link, fullPermissionToken)
+                .orElseThrow(() -> new NotFoundException("Not found room with token: " + fullPermissionToken));
     }
 }

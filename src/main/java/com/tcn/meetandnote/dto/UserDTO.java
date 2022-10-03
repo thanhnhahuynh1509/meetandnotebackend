@@ -8,7 +8,7 @@ public class UserDTO {
     private String lastName;
     private String avatar;
 
-    private String roomToken;
+    private String roomLink;
     private boolean enabled;
 
     public long getId() {
@@ -51,12 +51,12 @@ public class UserDTO {
         this.avatar = avatar;
     }
 
-    public String getRoomToken() {
-        return roomToken;
+    public String getRoomLink() {
+        return roomLink;
     }
 
-    public void setRoomToken(String roomToken) {
-        this.roomToken = roomToken;
+    public void setRoomLink(String roomLink) {
+        this.roomLink = roomLink;
     }
 
     public boolean isEnabled() {

@@ -38,14 +38,17 @@ public class UserServiceImpl implements UserService {
         if(isUsernameExists(user.getEmail())) {
             throw new ConflictException("Email has already use. Please enter another email");
         }
+
         // Save room
         Room room = new Room();
         room.setTitle("Home");
         room = roomService.save(room);
+
         // Save user
         user.setPassword(encodePassword(user.getPassword()));
-        user.setRoomToken(room.getFullPermissionToken());
+        user.setRoom(room);
         user = userRepository.save(user);
+
         // Save user-room
         UserRoom userRoom = new UserRoom();
         userRoom.setUser(user);
@@ -54,14 +57,17 @@ public class UserServiceImpl implements UserService {
         userRoom.setFullPermission(true);
         userRoom.setOwner(true);
         userRoomService.save(userRoom);
+
         return modelMapper.map(user, UserDTO.class);
     }
 
     @Override
-    public UserDTO getUserByUsernameAndPassword(String username, String password) {
-        User user =  userRepository.findUserByUsernameAndPassword(username, password)
-                .orElseThrow(() -> new NotFoundException("email or password are not correct!"));
-        return modelMapper.map(user, UserDTO.class);
+    public UserDTO getUserByUsernameAndConvertDTO(String username) {
+        User user =  userRepository.findUserByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Not found user with username or password above"));
+        UserDTO userResult = modelMapper.map(user, UserDTO.class);
+        userResult.setRoomLink(user.getRoom().getLink());
+        return modelMapper.map(userResult, UserDTO.class);
     }
 
     @Override
@@ -74,7 +80,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository
                 .findById(id)
                 .orElseThrow(() -> new NotFoundException("Not found user with id: " + id));
-        roomService.delete(user.getRoomToken());
+        roomService.delete(user.getRoom().getLink(), user.getRoom().getFullPermissionToken());
         userRepository.delete(user);
     }
 

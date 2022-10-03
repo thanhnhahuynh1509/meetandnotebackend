@@ -1,6 +1,8 @@
 package com.tcn.meetandnote.entity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "rooms")
@@ -20,6 +22,12 @@ public class Room {
 
     @Column(name = "full_permission_token", nullable = false, length = 50)
     private String fullPermissionToken = "";
+
+    private String link;
+
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    private List<UserRoom> userRooms = new ArrayList<>();
+
 
     public long getId() {
         return id;
@@ -67,5 +75,21 @@ public class Room {
 
     public void setFullPermissionToken(String fullPermissionToken) {
         this.fullPermissionToken = fullPermissionToken;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public List<UserRoom> getUserRooms() {
+        return userRooms;
+    }
+
+    public void setUserRooms(List<UserRoom> userRooms) {
+        this.userRooms = userRooms;
     }
 }

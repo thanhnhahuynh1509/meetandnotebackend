@@ -19,10 +19,12 @@ public class User {
     private String lastName;
     private String address;
     private boolean enabled = false;
+    @Column(columnDefinition="TEXT")
     private String avatar = "";
 
-    @Column(name = "room_token")
-    private String roomToken;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "room_id")
+    private Room room;
 
     public long getId() {
         return id;
@@ -88,11 +90,11 @@ public class User {
         this.address = address;
     }
 
-    public String getRoomToken() {
-        return roomToken;
+    public Room getRoom() {
+        return room;
     }
 
-    public void setRoomToken(String roomToken) {
-        this.roomToken = roomToken;
+    public void setRoom(Room room) {
+        this.room = room;
     }
 }
