@@ -10,14 +10,6 @@ public class UserRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "room_id")
-    private Room room;
-
     @Column(name = "is_owner")
     private boolean isOwner;
 
@@ -26,6 +18,15 @@ public class UserRoom {
 
     @Column(name = "is_full_permission")
     private boolean isFullPermission;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "room_id")
+    private Room room;
+
 
     public long getId() {
         return id;

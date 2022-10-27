@@ -7,16 +7,14 @@ import com.tcn.meetandnote.entity.UserRoom;
 import com.tcn.meetandnote.exception.ConflictException;
 import com.tcn.meetandnote.exception.NotFoundException;
 import com.tcn.meetandnote.repository.UserRepository;
-import com.tcn.meetandnote.services.RoomService;
-import com.tcn.meetandnote.services.UserRoomService;
-import com.tcn.meetandnote.services.UserService;
+import com.tcn.meetandnote.services.BaseService;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserService extends BaseService<User, Long> {
 
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
@@ -25,7 +23,8 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, RoomService roomService, UserRoomService userRoomService, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, RoomService roomService, UserRoomService userRoomService, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
+        super(userRepository, "user");
         this.userRepository = userRepository;
         this.roomService = roomService;
         this.userRoomService = userRoomService;
@@ -33,8 +32,7 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Override
-    public UserDTO save(User user) {
+    public UserDTO saveDTO(User user) {
         if(isUsernameExists(user.getEmail())) {
             throw new ConflictException("Email has already use. Please enter another email");
         }
@@ -62,6 +60,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    protected User update(Long aLong, User model) {
+        return null;
+    }
+
     public UserDTO getUserByUsernameAndConvertDTO(String username) {
         User user =  userRepository.findUserByUsername(username)
                 .orElseThrow(() -> new NotFoundException("Not found user with username or password above"));
@@ -70,13 +72,12 @@ public class UserServiceImpl implements UserService {
         return modelMapper.map(userResult, UserDTO.class);
     }
 
-    @Override
     public User getUserByUsername(String username) {
         return userRepository.findUserByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Email or Password are not correct!"));
     }
 
     @Override
-    public void delete(long id) {
+    public void delete(Long id) {
         User user = userRepository
                 .findById(id)
                 .orElseThrow(() -> new NotFoundException("Not found user with id: " + id));

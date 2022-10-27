@@ -1,7 +1,7 @@
 package com.tcn.meetandnote.controller;
 
 import com.tcn.meetandnote.entity.Type;
-import com.tcn.meetandnote.services.TypeService;
+import com.tcn.meetandnote.services.impl.TypeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

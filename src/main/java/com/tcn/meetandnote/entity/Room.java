@@ -2,7 +2,9 @@ package com.tcn.meetandnote.entity;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "rooms")
@@ -26,7 +28,14 @@ public class Room {
     private String link;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
-    private List<UserRoom> userRooms = new ArrayList<>();
+    private Set<UserRoom> userRooms = new LinkedHashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    private Room parent;
+
+    @OneToMany(mappedBy = "parent")
+    private Set<Room> children = new LinkedHashSet<>();
 
 
     public long getId() {
@@ -85,11 +94,27 @@ public class Room {
         this.link = link;
     }
 
-    public List<UserRoom> getUserRooms() {
+    public Set<UserRoom> getUserRooms() {
         return userRooms;
     }
 
-    public void setUserRooms(List<UserRoom> userRooms) {
+    public void setUserRooms(Set<UserRoom> userRooms) {
         this.userRooms = userRooms;
+    }
+
+    public Room getParent() {
+        return parent;
+    }
+
+    public void setParent(Room parent) {
+        this.parent = parent;
+    }
+
+    public Set<Room> getChildren() {
+        return children;
+    }
+
+    public void setChildren(Set<Room> children) {
+        this.children = children;
     }
 }

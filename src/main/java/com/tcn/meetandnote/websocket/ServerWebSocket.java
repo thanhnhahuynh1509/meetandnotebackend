@@ -10,7 +10,7 @@ public class ServerWebSocket {
 
     @MessageMapping("/{token}")
     @SendTo("/topic/{token}")
-    public Object response(@DestinationVariable String token, Object obj) {
+    public Object response(@DestinationVariable String token, String obj) {
         return obj;
     }
 

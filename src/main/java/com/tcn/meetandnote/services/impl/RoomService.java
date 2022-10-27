@@ -3,18 +3,19 @@ package com.tcn.meetandnote.services.impl;
 import com.tcn.meetandnote.entity.Room;
 import com.tcn.meetandnote.exception.NotFoundException;
 import com.tcn.meetandnote.repository.RoomRepository;
-import com.tcn.meetandnote.services.RoomService;
+import com.tcn.meetandnote.services.BaseService;
 import com.tcn.meetandnote.utils.MD5Hashing;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class RoomServiceImpl implements RoomService {
+public class RoomService extends BaseService<Room, Long> {
 
     private final RoomRepository roomRepository;
 
-    public RoomServiceImpl(RoomRepository roomRepository) {
+    public RoomService(RoomRepository roomRepository) {
+        super(roomRepository, "room");
         this.roomRepository = roomRepository;
     }
 
@@ -32,10 +33,6 @@ public class RoomServiceImpl implements RoomService {
         return roomRepository.save(room);
     }
 
-    @Override
-    public Room get(long id) {
-        return getRoomById(id);
-    }
 
     @Override
     public List<Room> gets() {
@@ -43,6 +40,10 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    protected Room update(Long id, Room model) {
+        return null;
+    }
+
     public Room update(String link, String fullPermissionToken, Room room) {
         Room db = getRoomByFullPermissionToken(link, fullPermissionToken);
         db.setColor(room.getColor());
@@ -51,14 +52,9 @@ public class RoomServiceImpl implements RoomService {
         return roomRepository.save(db);
     }
 
-    @Override
     public void delete(String link, String fullPermissionToken) {
         Room room = getRoomByFullPermissionToken(link, fullPermissionToken);
         roomRepository.delete(room);
-    }
-
-    private Room getRoomById(long id) {
-        return roomRepository.findById(id).orElseThrow(() -> new NotFoundException("Not found room with id: " + id));
     }
 
     private Room getRoomByFullPermissionToken(String link, String fullPermissionToken) {
