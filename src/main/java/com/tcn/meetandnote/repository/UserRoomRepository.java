@@ -11,4 +11,6 @@ public interface UserRoomRepository extends JpaRepository<UserRoom, Long> {
     @Query("SELECT ur FROM UserRoom ur WHERE ur.user.id = ?1 AND ur.room.id = ?2")
     Optional<UserRoom> findUserRoomByUserIDAndRoomID(long userId, long roomId);
 
+    @Query("SELECT ur FROM UserRoom ur WHERE ur.room.id = ?1 AND ur.isOwner=true")
+    Optional<UserRoom> findUserRoomOwnerByRoomId(long roomId);
 }

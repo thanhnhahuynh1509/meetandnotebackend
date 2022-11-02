@@ -12,4 +12,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     @Query("SELECT r FROM Room r WHERE r.link = ?1 AND r.fullPermissionToken = ?2")
     Optional<Room> findByLinkAndFullPermissionToken(String link, String permissionToken);
 
+    @Query("SELECT r FROM Room r WHERE r.link = ?1")
+    Optional<Room> findByLink(String link);
+
 }

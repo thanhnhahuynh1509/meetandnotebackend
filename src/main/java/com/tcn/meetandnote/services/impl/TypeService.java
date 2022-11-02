@@ -1,6 +1,7 @@
 package com.tcn.meetandnote.services.impl;
 
 import com.tcn.meetandnote.entity.Type;
+import com.tcn.meetandnote.exception.NotFoundException;
 import com.tcn.meetandnote.repository.TypeRepository;
 import com.tcn.meetandnote.services.BaseService;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,10 @@ public class TypeService extends BaseService<Type, Long> {
         typeDb.setDescription(type.getDescription());
         typeDb.setName(type.getName());
         return typeRepository.save(typeDb);
+    }
+
+    public Type getTypeByName(String name) {
+        return typeRepository.findTypeByName(name).orElseThrow(() -> new NotFoundException("Not found type with name: " + name));
     }
 
 }

@@ -8,10 +8,17 @@ import com.tcn.meetandnote.exception.ConflictException;
 import com.tcn.meetandnote.exception.NotFoundException;
 import com.tcn.meetandnote.repository.UserRepository;
 import com.tcn.meetandnote.services.BaseService;
+import com.tcn.meetandnote.utils.FileUploadUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 @Service
 public class UserService extends BaseService<User, Long> {
@@ -46,6 +53,15 @@ public class UserService extends BaseService<User, Long> {
         user.setPassword(encodePassword(user.getPassword()));
         user.setRoom(room);
         user = userRepository.save(user);
+//
+
+
+        return modelMapper.map(user, UserDTO.class);
+    }
+
+    public UserDTO addRoom(long roomId, long userId) {
+        User user = getSingleResultById(userId);
+        Room room = new Room(roomId);
 
         // Save user-room
         UserRoom userRoom = new UserRoom();
@@ -55,13 +71,45 @@ public class UserService extends BaseService<User, Long> {
         userRoom.setFullPermission(true);
         userRoom.setOwner(true);
         userRoomService.save(userRoom);
-
         return modelMapper.map(user, UserDTO.class);
     }
 
     @Override
     protected User update(Long aLong, User model) {
         return null;
+    }
+
+    public UserDTO updateUser(long id, User model) {
+        User user = getSingleResultById(id);
+        user.setAddress(model.getAddress());
+        user.setFirstName(model.getFirstName());
+        user.setLastName(model.getLastName());
+        return modelMapper.map(userRepository.save(user), UserDTO.class);
+    }
+
+    public UserDTO updateImage(long id, MultipartFile imageFile) {
+        User user = getSingleResultById(id);
+        String imageName = FileUploadUtils.generateFileName(imageFile);
+        File file = new File(user.getImagePath());
+        if(!file.exists()) {
+            try {
+                Files.createDirectories(Paths.get(user.getImagePath()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        String path = file.getAbsolutePath();
+        try {
+            FileUploadUtils.upload(imageName, path, imageFile);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
+        if(user.getAvatar() != null && !user.getAvatar().isBlank()) {
+            FileUploadUtils.delete(user.getAvatar());
+        }
+        user.setAvatar(user.getImagePath() + "/" + imageName);
+        return modelMapper.map(userRepository.save(user), UserDTO.class);
     }
 
     public UserDTO getUserByUsernameAndConvertDTO(String username) {

@@ -23,6 +23,11 @@ public class UserRoomService extends BaseService<UserRoom, Long> {
                 .orElseThrow(() -> new NotFoundException("Not found user-room"));
     }
 
+    public UserRoom getUserRoomOwnerByRoomId(long roomId) {
+        return userRoomRepository.findUserRoomOwnerByRoomId(roomId)
+                .orElseThrow(() -> new NotFoundException("Not found user-room"));
+    }
+
     @Override
     public UserRoom update(Long id, UserRoom userRoom) {
         UserRoom inDb = getSingleResultById(id);

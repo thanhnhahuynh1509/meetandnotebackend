@@ -1,6 +1,8 @@
 package com.tcn.meetandnote.services.impl;
 
+import com.tcn.meetandnote.dto.RoomDTO;
 import com.tcn.meetandnote.entity.Room;
+import com.tcn.meetandnote.entity.Type;
 import com.tcn.meetandnote.exception.NotFoundException;
 import com.tcn.meetandnote.repository.RoomRepository;
 import com.tcn.meetandnote.services.BaseService;
@@ -13,14 +15,18 @@ import java.util.List;
 public class RoomService extends BaseService<Room, Long> {
 
     private final RoomRepository roomRepository;
+    private final TypeService typeService;
 
-    public RoomService(RoomRepository roomRepository) {
+    public RoomService(RoomRepository roomRepository, TypeService typeService) {
         super(roomRepository, "room");
         this.roomRepository = roomRepository;
+        this.typeService = typeService;
     }
 
     @Override
     public Room save(Room room) {
+        Type type = typeService.getTypeByName("ROOM");
+        room.setType(type);
         room = roomRepository.save(room);
         String link = MD5Hashing.hash(room.getId() + "");
         String readToken = MD5Hashing.hash(room.getId()+"read");
@@ -39,9 +45,28 @@ public class RoomService extends BaseService<Room, Long> {
         return roomRepository.findAll();
     }
 
+    public Room getByLink(String link) {
+        return roomRepository.findByLink(link).orElseThrow(() -> new NotFoundException("Not found room with link: " + link));
+    }
+
     @Override
     protected Room update(Long id, Room model) {
         return null;
+    }
+
+    public Room updatePosition(Long id, RoomDTO model) {
+        Room room = getSingleResultById(id);
+        room.setPosY(model.getPosY());
+        room.setPosX(model.getPosX());
+        return roomRepository.save(room);
+    }
+
+    public Room updateInformation(Long id, RoomDTO model) {
+        Room room = getSingleResultById(id);
+        room.setTitle(model.getTitle());
+        room.setIcon(model.getIcon());
+        room.setColor(model.getColor());
+        return roomRepository.save(room);
     }
 
     public Room update(String link, String fullPermissionToken, Room room) {

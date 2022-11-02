@@ -1,12 +1,14 @@
 package com.tcn.meetandnote.controller;
 
 import com.tcn.meetandnote.dto.UserDTO;
+import com.tcn.meetandnote.entity.User;
 import com.tcn.meetandnote.security.JWTProvider;
 import com.tcn.meetandnote.services.impl.UserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.tcn.meetandnote.utils.FileUploadUtils;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 
 @RestController
 @RequestMapping("/api/users")
@@ -20,9 +22,21 @@ public class UserController {
         this.userService = userService;
     }
 
+
+
     @PostMapping("/get-by-token")
     public UserDTO getUserFromToken(@RequestBody String token) {
         String username = jwtProvider.getUsernameFromToken(token);
         return userService.getUserByUsernameAndConvertDTO(username);
+    }
+
+    @PutMapping("/{id}")
+    public UserDTO updateUser(@PathVariable long id, @RequestBody User user) {
+        return userService.updateUser(id, user);
+    }
+
+    @PutMapping("/{id}/update-image")
+    public UserDTO updateImage(@PathVariable long id, @RequestPart MultipartFile imageFile) {
+        return userService.updateImage(id, imageFile);
     }
 }

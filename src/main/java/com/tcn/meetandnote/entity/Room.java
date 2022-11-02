@@ -1,10 +1,7 @@
 package com.tcn.meetandnote.entity;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "rooms")
@@ -25,7 +22,14 @@ public class Room {
     @Column(name = "full_permission_token", nullable = false, length = 50)
     private String fullPermissionToken = "";
 
+    private double posX;
+    private double posY;
+
     private String link;
+
+    @ManyToOne
+    @JoinColumn(name = "type_id")
+    private Type type;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private Set<UserRoom> userRooms = new LinkedHashSet<>();
@@ -37,6 +41,13 @@ public class Room {
     @OneToMany(mappedBy = "parent")
     private Set<Room> children = new LinkedHashSet<>();
 
+    public Room() {
+
+    }
+
+    public Room(long id) {
+        this.id = id;
+    }
 
     public long getId() {
         return id;
@@ -116,5 +127,42 @@ public class Room {
 
     public void setChildren(Set<Room> children) {
         this.children = children;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public double getPosX() {
+        return posX;
+    }
+
+    public void setPosX(double posX) {
+        this.posX = posX;
+    }
+
+    public double getPosY() {
+        return posY;
+    }
+
+    public void setPosY(double posY) {
+        this.posY = posY;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Room room = (Room) o;
+        return id == room.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

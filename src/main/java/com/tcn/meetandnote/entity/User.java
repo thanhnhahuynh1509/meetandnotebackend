@@ -6,6 +6,8 @@ import javax.persistence.*;
 @Table(name="users")
 public class User {
 
+    private static final String PATH = "assets/users";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -96,5 +98,10 @@ public class User {
 
     public void setRoom(Room room) {
         this.room = room;
+    }
+
+    @Transient
+    public String getImagePath() {
+        return PATH + "/" + this.id + "/images";
     }
 }

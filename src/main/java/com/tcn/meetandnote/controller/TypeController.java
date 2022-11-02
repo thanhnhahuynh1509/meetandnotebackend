@@ -10,7 +10,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/v1/types")
+@RequestMapping("/api/types")
 public class TypeController {
 
     private final TypeService typeService;

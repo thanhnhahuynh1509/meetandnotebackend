@@ -26,6 +26,10 @@ public class Component {
     @JoinColumn(name = "room_id")
     private Room room;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     public long getId() {
         return id;
     }
@@ -72,5 +76,13 @@ public class Component {
 
     public void setRoom(Room room) {
         this.room = room;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

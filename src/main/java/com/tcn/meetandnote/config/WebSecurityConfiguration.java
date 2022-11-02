@@ -38,6 +38,7 @@ public class WebSecurityConfiguration {
                 .csrf().disable().authorizeRequests()
                 .antMatchers("/sign-in/**").permitAll()
                 .antMatchers("/sign-up/**").permitAll()
+                .antMatchers("/assets/**").permitAll()
                 .antMatchers("/ws/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
