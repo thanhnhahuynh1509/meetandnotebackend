@@ -1,21 +1,10 @@
-package com.tcn.meetandnote.entity;
+package com.tcn.meetandnote.dto;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name = "attributes")
-public class Attribute {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class AttributeDTO {
     private long id;
     private String color;
     private String title;
     private String content;
-
-    @ManyToOne
-    @JoinColumn(name = "component_id")
-    private Component component;
 
     public long getId() {
         return id;
@@ -47,13 +36,5 @@ public class Attribute {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public Component getComponent() {
-        return component;
-    }
-
-    public void setComponent(Component component) {
-        this.component = component;
     }
 }

@@ -1,9 +1,5 @@
 package com.tcn.meetandnote.dto;
 
-import com.tcn.meetandnote.entity.Room;
-import com.tcn.meetandnote.entity.Type;
-import com.tcn.meetandnote.entity.User;
-
 
 public class ComponentDTO {
     private long id;
@@ -19,6 +15,8 @@ public class ComponentDTO {
     private long parentId;
 
     private UserDTO user;
+
+    private AttributeDTO attribute;
 
     public long getId() {
         return id;
@@ -74,5 +72,13 @@ public class ComponentDTO {
 
     public void setUser(UserDTO user) {
         this.user = user;
+    }
+
+    public AttributeDTO getAttribute() {
+        return attribute;
+    }
+
+    public void setAttribute(AttributeDTO attribute) {
+        this.attribute = attribute;
     }
 }

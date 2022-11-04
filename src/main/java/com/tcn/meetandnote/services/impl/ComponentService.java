@@ -1,6 +1,8 @@
 package com.tcn.meetandnote.services.impl;
 
+import com.tcn.meetandnote.dto.AttributeDTO;
 import com.tcn.meetandnote.dto.ComponentDTO;
+import com.tcn.meetandnote.entity.Attribute;
 import com.tcn.meetandnote.entity.Component;
 import com.tcn.meetandnote.entity.Room;
 import com.tcn.meetandnote.entity.User;
@@ -17,13 +19,15 @@ public class ComponentService extends BaseService<Component, Long> {
 
 
     private final ComponentRepository componentRepository;
+    private final AttributeService attributeService;
     private final RoomService roomService;
     private final TypeService typeService;
     private final ModelMapper modelMapper;
 
-    protected ComponentService(ComponentRepository baseRepository, RoomService roomService, TypeService typeService, ModelMapper modelMapper) {
+    protected ComponentService(ComponentRepository baseRepository, AttributeService attributeService, RoomService roomService, TypeService typeService, ModelMapper modelMapper) {
         super(baseRepository, "component");
         this.componentRepository = baseRepository;
+        this.attributeService = attributeService;
         this.roomService = roomService;
         this.typeService = typeService;
         this.modelMapper = modelMapper;
@@ -37,9 +41,20 @@ public class ComponentService extends BaseService<Component, Long> {
         component.setRoom(new Room(model.getParentId()));
         component.setType(typeService.getTypeByName(model.getType()));
         component = componentRepository.save(component);
+
+        Attribute attribute = new Attribute();
+        attribute.setComponent(component);
+        attribute.setColor("#ffffff");
+//        attribute.setContent(model.getAttribute().getContent());
+//        attribute.setTitle(model.getAttribute().getTitle());
+//        attribute.setColor(model.getAttribute().getColor());
+//
+        AttributeDTO attributeDTO = modelMapper.map(attributeService.save(attribute), AttributeDTO.class);
+
         ComponentDTO componentDTO = modelMapper.map(component, ComponentDTO.class);
         componentDTO.setType(model.getType());
         componentDTO.setParentId(model.getParentId());
+        componentDTO.setAttribute(attributeDTO);
         return componentDTO;
     }
 
@@ -62,6 +77,11 @@ public class ComponentService extends BaseService<Component, Long> {
         List<ComponentDTO> componentDTOS = new ArrayList<>();
         for(Component component : components) {
             ComponentDTO componentDTO = modelMapper.map(component, ComponentDTO.class);
+
+            Attribute attribute = attributeService.getByComponentId(component.getId());
+            AttributeDTO attributeDTO = modelMapper.map(attribute, AttributeDTO.class);
+
+            componentDTO.setAttribute(attributeDTO);
             componentDTO.setParentId(component.getRoom().getId());
             componentDTO.setType(component.getType().getName());
             componentDTOS.add(componentDTO);
