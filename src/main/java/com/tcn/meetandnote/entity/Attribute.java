@@ -17,6 +17,13 @@ public class Attribute {
     @JoinColumn(name = "component_id")
     private Component component;
 
+    public Attribute() {
+    }
+
+    public Attribute(long id) {
+        this.id = id;
+    }
+
     public long getId() {
         return id;
     }

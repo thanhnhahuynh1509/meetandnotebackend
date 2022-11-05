@@ -10,16 +10,19 @@ import com.tcn.meetandnote.utils.MD5Hashing;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RoomService extends BaseService<Room, Long> {
 
     private final RoomRepository roomRepository;
+    private final ComponentService componentService;
     private final TypeService typeService;
 
-    public RoomService(RoomRepository roomRepository, TypeService typeService) {
+    public RoomService(RoomRepository roomRepository, ComponentService componentService, TypeService typeService) {
         super(roomRepository, "room");
         this.roomRepository = roomRepository;
+        this.componentService = componentService;
         this.typeService = typeService;
     }
 
@@ -85,5 +88,16 @@ public class RoomService extends BaseService<Room, Long> {
     private Room getRoomByFullPermissionToken(String link, String fullPermissionToken) {
         return roomRepository.findByLinkAndFullPermissionToken(link, fullPermissionToken)
                 .orElseThrow(() -> new NotFoundException("Not found room with token: " + fullPermissionToken));
+    }
+
+    public long getLastID() {
+        Optional<Room> lastRoomOptional = roomRepository.findLastRoom();
+        return lastRoomOptional.map(Room::getId).orElseGet(() -> 0L);
+    }
+
+    @Override
+    public void delete(Long id) {
+        componentService.deleteByRoomId(id);
+        super.delete(id);
     }
 }

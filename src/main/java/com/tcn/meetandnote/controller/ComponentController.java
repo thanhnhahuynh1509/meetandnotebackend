@@ -40,6 +40,12 @@ public class ComponentController {
         return componentService.getByRoomLinkTrash(link);
     }
 
+    @GetMapping("/last-id")
+    public long getLastID() {
+        long id = componentService.getLastID();
+        return id;
+    }
+
 
     @PutMapping("/position/{id}")
     public ComponentDTO updatePosition(@PathVariable long id, @RequestBody ComponentDTO componentDTO) {
@@ -51,12 +57,12 @@ public class ComponentController {
         return componentService.trashComponent(id);
     }
 
-    @DeleteMapping("/re-trash/{id}")
+    @PutMapping("/re-trash/{id}")
     public ComponentDTO reTrashComponent(@PathVariable long id) {
         return componentService.reTrashComponent(id);
     }
 
-    @PutMapping("/{id}")
+    @DeleteMapping("/{id}")
     public String delete(@PathVariable long id) {
         componentService.delete(id);
         return "ok";

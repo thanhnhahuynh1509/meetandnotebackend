@@ -2,10 +2,7 @@ package com.tcn.meetandnote.services.impl;
 
 import com.tcn.meetandnote.dto.AttributeDTO;
 import com.tcn.meetandnote.dto.ComponentDTO;
-import com.tcn.meetandnote.entity.Attribute;
-import com.tcn.meetandnote.entity.Component;
-import com.tcn.meetandnote.entity.Room;
-import com.tcn.meetandnote.entity.User;
+import com.tcn.meetandnote.entity.*;
 import com.tcn.meetandnote.repository.ComponentRepository;
 import com.tcn.meetandnote.services.BaseService;
 import org.modelmapper.ModelMapper;
@@ -13,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ComponentService extends BaseService<Component, Long> {
@@ -20,15 +18,15 @@ public class ComponentService extends BaseService<Component, Long> {
 
     private final ComponentRepository componentRepository;
     private final AttributeService attributeService;
-    private final RoomService roomService;
+    private final TodoService todoService;
     private final TypeService typeService;
     private final ModelMapper modelMapper;
 
-    protected ComponentService(ComponentRepository baseRepository, AttributeService attributeService, RoomService roomService, TypeService typeService, ModelMapper modelMapper) {
+    protected ComponentService(ComponentRepository baseRepository, AttributeService attributeService, TodoService todoService, TypeService typeService, ModelMapper modelMapper) {
         super(baseRepository, "component");
         this.componentRepository = baseRepository;
         this.attributeService = attributeService;
-        this.roomService = roomService;
+        this.todoService = todoService;
         this.typeService = typeService;
         this.modelMapper = modelMapper;
     }
@@ -49,7 +47,16 @@ public class ComponentService extends BaseService<Component, Long> {
 //        attribute.setTitle(model.getAttribute().getTitle());
 //        attribute.setColor(model.getAttribute().getColor());
 //
-        AttributeDTO attributeDTO = modelMapper.map(attributeService.save(attribute), AttributeDTO.class);
+        attribute = attributeService.save(attribute);
+        AttributeDTO attributeDTO = modelMapper.map(attribute, AttributeDTO.class);
+
+        if(model.getType().equals("TODO")) {
+            Todo todo = new Todo();
+            todo.setDone(false);
+            todo.setAttribute(attribute);
+            todo.setContent("");
+            todoService.save(todo);
+        }
 
         ComponentDTO componentDTO = modelMapper.map(component, ComponentDTO.class);
         componentDTO.setType(model.getType());
@@ -112,5 +119,16 @@ public class ComponentService extends BaseService<Component, Long> {
         Component component = getSingleResultById(id);
         component.setDeleted(false);
         return modelMapper.map(componentRepository.save(component), ComponentDTO.class);
+    }
+
+    public long getLastID() {
+        Optional<Component> lastComponentOptional = componentRepository.findLastComponent();
+        return lastComponentOptional.map(Component::getId).orElseGet(() -> 0L);
+    }
+
+    public void deleteByRoomId(long id) {
+        todoService.deleteByRoomId(id);
+        attributeService.deleteByRoomId(id);
+        componentRepository.deleteByRoomId(id);
     }
 }

@@ -56,6 +56,12 @@ public class RoomController {
         return roomDTOS;
     }
 
+    @GetMapping("/last-id")
+    public long getLastID() {
+        long id = roomService.getLastID();
+        return id;
+    }
+
     @PostMapping
     public ResponseEntity<RoomDTO> save(@RequestBody RoomDTO roomDTO) {
         UserDTO userDTO = roomDTO.getUser();

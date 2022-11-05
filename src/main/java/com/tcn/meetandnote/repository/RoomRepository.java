@@ -15,4 +15,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     @Query("SELECT r FROM Room r WHERE r.link = ?1")
     Optional<Room> findByLink(String link);
 
+    @Query(value = "SELECT * FROM Rooms ORDER BY id DESC LIMIT 1", nativeQuery = true)
+    Optional<Room> findLastRoom();
+
 }
