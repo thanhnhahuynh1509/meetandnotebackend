@@ -5,6 +5,7 @@ import com.tcn.meetandnote.entity.Attribute;
 import com.tcn.meetandnote.services.impl.AttributeService;
 import com.tcn.meetandnote.utils.FileUploadUtils;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,9 +30,8 @@ public class AttributeController {
 
     @GetMapping("/components/{id}")
     public AttributeDTO getAttributeByComponentId(@PathVariable long id) {
-        return modelMapper.map(attributeService.getByComponentId(id), AttributeDTO.class);
+        return attributeService.getByComponentId(id);
     }
-
 
     @PostMapping("/upload/{id}")
     public String uploadFile(@PathVariable long id, @RequestPart MultipartFile file) {
@@ -42,5 +42,9 @@ public class AttributeController {
         }
     }
 
+    @PutMapping("/{id}")
+    public AttributeDTO updateTitle(@PathVariable long id, @RequestBody Attribute attribute) {
+        return modelMapper.map(attributeService.updateTitle(id, attribute), AttributeDTO.class);
+    }
 
 }

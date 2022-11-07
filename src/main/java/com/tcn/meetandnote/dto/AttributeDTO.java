@@ -1,11 +1,15 @@
 package com.tcn.meetandnote.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AttributeDTO {
     private long id;
     private String color;
     private String title;
     private String content;
     private String fileType;
+    private List<TodoDTO> todos = new ArrayList<>();
 
     public long getId() {
         return id;
@@ -45,5 +49,13 @@ public class AttributeDTO {
 
     public void setFileType(String fileType) {
         this.fileType = fileType;
+    }
+
+    public List<TodoDTO> getTodos() {
+        return todos;
+    }
+
+    public void setTodos(List<TodoDTO> todos) {
+        this.todos = todos;
     }
 }

@@ -2,6 +2,7 @@ package com.tcn.meetandnote.services.impl;
 
 import com.tcn.meetandnote.dto.AttributeDTO;
 import com.tcn.meetandnote.dto.ComponentDTO;
+import com.tcn.meetandnote.dto.TodoDTO;
 import com.tcn.meetandnote.entity.*;
 import com.tcn.meetandnote.repository.ComponentRepository;
 import com.tcn.meetandnote.services.BaseService;
@@ -56,7 +57,8 @@ public class ComponentService extends BaseService<Component, Long> {
             todo.setDone(false);
             todo.setAttribute(attribute);
             todo.setContent("");
-            todoService.save(todo);
+            todo = todoService.save(todo);
+            attributeDTO.getTodos().add(modelMapper.map(todo, TodoDTO.class));
         }
 
         ComponentDTO componentDTO = modelMapper.map(component, ComponentDTO.class);
@@ -86,8 +88,7 @@ public class ComponentService extends BaseService<Component, Long> {
         for(Component component : components) {
             ComponentDTO componentDTO = modelMapper.map(component, ComponentDTO.class);
 
-            Attribute attribute = attributeService.getByComponentId(component.getId());
-            AttributeDTO attributeDTO = modelMapper.map(attribute, AttributeDTO.class);
+            AttributeDTO attributeDTO = attributeService.getByComponentId(component.getId());
 
             componentDTO.setAttribute(attributeDTO);
             componentDTO.setParentId(component.getRoom().getId());
@@ -129,7 +130,8 @@ public class ComponentService extends BaseService<Component, Long> {
 
     @Override
     public void delete(Long id) {
-        Attribute attribute = attributeService.getByComponentId(id);
+        AttributeDTO attributeDTO = attributeService.getByComponentId(id);
+        Attribute attribute = modelMapper.map(attributeDTO, Attribute.class);
         FileUploadUtils.delete(attribute.getFilePath());
         attributeService.delete(attribute.getId());
         super.delete(id);
