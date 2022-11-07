@@ -5,6 +5,7 @@ import com.tcn.meetandnote.dto.ComponentDTO;
 import com.tcn.meetandnote.entity.*;
 import com.tcn.meetandnote.repository.ComponentRepository;
 import com.tcn.meetandnote.services.BaseService;
+import com.tcn.meetandnote.utils.FileUploadUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -126,9 +127,11 @@ public class ComponentService extends BaseService<Component, Long> {
         return lastComponentOptional.map(Component::getId).orElseGet(() -> 0L);
     }
 
-    public void deleteByRoomId(long id) {
-        todoService.deleteByRoomId(id);
-        attributeService.deleteByRoomId(id);
-        componentRepository.deleteByRoomId(id);
+    @Override
+    public void delete(Long id) {
+        Attribute attribute = attributeService.getByComponentId(id);
+        FileUploadUtils.delete(attribute.getFilePath());
+        attributeService.delete(attribute.getId());
+        super.delete(id);
     }
 }

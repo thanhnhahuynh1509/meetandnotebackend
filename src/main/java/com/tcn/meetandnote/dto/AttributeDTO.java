@@ -5,6 +5,7 @@ public class AttributeDTO {
     private String color;
     private String title;
     private String content;
+    private String fileType;
 
     public long getId() {
         return id;
@@ -36,5 +37,13 @@ public class AttributeDTO {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
     }
 }

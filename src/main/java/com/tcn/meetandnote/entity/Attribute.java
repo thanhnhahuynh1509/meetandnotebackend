@@ -6,12 +6,15 @@ import javax.persistence.*;
 @Table(name = "attributes")
 public class Attribute {
 
+    private static final String PATH = "assets/attributes";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String color;
     private String title;
     private String content;
+    @Column(name = "file_type")
+    private String fileType;
 
     @ManyToOne
     @JoinColumn(name = "component_id")
@@ -62,5 +65,18 @@ public class Attribute {
 
     public void setComponent(Component component) {
         this.component = component;
+    }
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
+    }
+
+    @Transient
+    public String getFilePath() {
+        return PATH + "/" + this.id + "/files";
     }
 }

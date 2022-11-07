@@ -7,6 +7,7 @@ import com.tcn.meetandnote.services.impl.ComponentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -67,4 +68,5 @@ public class ComponentController {
         componentService.delete(id);
         return "ok";
     }
+
 }

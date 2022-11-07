@@ -36,15 +36,20 @@ public class FileUploadUtils {
     }
 
     public static boolean delete(String path) {
-        File file = new File(path);
-        if(file.isDirectory()) {
-            String[] entries = file.list();
-            for(String fileName : entries) {
-                File currentFile = new File(file.getPath(), fileName);
-                currentFile.delete();
+        try {
+            File file = new File(path);
+            if(file.isDirectory()) {
+                String[] entries = file.list();
+                for(String fileName : entries) {
+                    File currentFile = new File(file.getPath(), fileName);
+                    currentFile.delete();
+                }
             }
+            return file.delete();
+        } catch(Exception e) {
+            e.printStackTrace();
         }
-        return file.delete();
+        return false;
     }
 
 

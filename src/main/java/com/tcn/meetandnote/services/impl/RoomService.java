@@ -95,9 +95,4 @@ public class RoomService extends BaseService<Room, Long> {
         return lastRoomOptional.map(Room::getId).orElseGet(() -> 0L);
     }
 
-    @Override
-    public void delete(Long id) {
-        componentService.deleteByRoomId(id);
-        super.delete(id);
-    }
 }

@@ -10,13 +10,9 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-@Transactional
 public interface AttributeRepository extends JpaRepository<Attribute, Long> {
 
     @Query("SELECT a FROM Attribute a WHERE a.component.id = ?1")
     Optional<Attribute> findByComponentId(long componentId);
 
-    @Modifying
-    @Query("DELETE FROM Attribute a WHERE a.component.room.id = ?1")
-    void deleteByRoomId(long id);
 }

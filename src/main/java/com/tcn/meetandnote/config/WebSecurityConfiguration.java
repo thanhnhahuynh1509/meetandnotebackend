@@ -44,6 +44,7 @@ public class WebSecurityConfiguration {
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.headers().frameOptions().disable();
         return http.build();
     }
 

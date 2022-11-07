@@ -1,17 +1,25 @@
 package com.tcn.meetandnote.controller;
 
+import com.tcn.meetandnote.dto.AttributeDTO;
 import com.tcn.meetandnote.entity.Attribute;
 import com.tcn.meetandnote.services.impl.AttributeService;
+import com.tcn.meetandnote.utils.FileUploadUtils;
+import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/attributes")
 public class AttributeController {
 
     private final AttributeService attributeService;
+    private final ModelMapper modelMapper;
 
-    public AttributeController(AttributeService attributeService) {
+    public AttributeController(AttributeService attributeService, ModelMapper modelMapper) {
         this.attributeService = attributeService;
+        this.modelMapper = modelMapper;
     }
 
     @PostMapping("")
@@ -20,7 +28,19 @@ public class AttributeController {
     }
 
     @GetMapping("/components/{id}")
-    public Attribute getAttributeByComponentId(@PathVariable long id) {
-        return attributeService.getByComponentId(id);
+    public AttributeDTO getAttributeByComponentId(@PathVariable long id) {
+        return modelMapper.map(attributeService.getByComponentId(id), AttributeDTO.class);
     }
+
+
+    @PostMapping("/upload/{id}")
+    public String uploadFile(@PathVariable long id, @RequestPart MultipartFile file) {
+        try {
+            return attributeService.uploadFile(id, file);
+        } catch (IOException e) {
+            return "";
+        }
+    }
+
+
 }
