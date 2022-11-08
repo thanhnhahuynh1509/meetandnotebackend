@@ -1,14 +1,23 @@
 package com.tcn.meetandnote.services.impl;
 
+import com.tcn.meetandnote.dto.ComponentDTO;
 import com.tcn.meetandnote.dto.RoomDTO;
 import com.tcn.meetandnote.entity.Room;
 import com.tcn.meetandnote.entity.Type;
+import com.tcn.meetandnote.entity.User;
+import com.tcn.meetandnote.entity.UserRoom;
 import com.tcn.meetandnote.exception.NotFoundException;
 import com.tcn.meetandnote.repository.RoomRepository;
+import com.tcn.meetandnote.repository.UserRepository;
+import com.tcn.meetandnote.repository.UserRoomRepository;
 import com.tcn.meetandnote.services.BaseService;
 import com.tcn.meetandnote.utils.MD5Hashing;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,13 +26,21 @@ public class RoomService extends BaseService<Room, Long> {
 
     private final RoomRepository roomRepository;
     private final ComponentService componentService;
+    private final UserRoomService userRoomService;
+    private final UserRepository userRepository;
+    private final UserRoomRepository userRoomRepository;
     private final TypeService typeService;
+    private final ModelMapper modelMapper;
 
-    public RoomService(RoomRepository roomRepository, ComponentService componentService, TypeService typeService) {
+    public RoomService(RoomRepository roomRepository, ComponentService componentService, UserRoomService userRoomService, UserRepository userRepository, UserRoomRepository userRoomRepository, TypeService typeService, ModelMapper modelMapper) {
         super(roomRepository, "room");
         this.roomRepository = roomRepository;
         this.componentService = componentService;
+        this.userRoomService = userRoomService;
+        this.userRepository = userRepository;
+        this.userRoomRepository = userRoomRepository;
         this.typeService = typeService;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -95,4 +112,72 @@ public class RoomService extends BaseService<Room, Long> {
         return lastRoomOptional.map(Room::getId).orElseGet(() -> 0L);
     }
 
+    public List<RoomDTO> getRoomByUserId(long id) {
+        List<RoomDTO> roomDTOS = new ArrayList<>();
+        try {
+            List<Room> rooms = userRoomService.getRoomsByUserId(id);
+            for(Room room : rooms) {
+                roomDTOS.add(modelMapper.map(room, RoomDTO.class));
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return roomDTOS;
+    }
+
+    public String inviteUser(long roomId, String email, String permission) {
+        try {
+            User user = userRepository.findUserByUsername(email).orElseThrow(() -> new NotFoundException("Not found user"));
+            Room room = getSingleResultById(roomId);
+
+            UserRoom userRoomCheck = userRoomRepository
+                    .findUserRoomByUserIDAndRoomID(user.getId(), room.getId()).orElseGet(() -> null);
+
+            if(userRoomCheck != null) {
+                return "EXISTS";
+            }
+
+            UserRoom userRoom = new UserRoom();
+            userRoom.setRoom(room);
+            userRoom.setOwner(false);
+            if(permission.equalsIgnoreCase("FULL")) {
+                userRoom.setFullPermission(true);
+            }
+            userRoom.setRead(true);
+            userRoom.setUser(user);
+            userRoomService.save(userRoom);
+        } catch (NotFoundException ex) {
+            return "NOT OK";
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "BAD REQUEST";
+        }
+
+        return "OK";
+    }
+
+    public RoomDTO getRoomOwnerByUserAndLink(String link, long userId) {
+        Optional<Room> roomOptional = userRoomRepository.findRoomByOwnerAndRoomLinkAndUserId(link, userId);
+        if(roomOptional.isEmpty())
+            return null;
+        return modelMapper.map(roomOptional.get(), RoomDTO.class);
+    }
+
+    public boolean checkUserInRoom(String link, long id) {
+        return userRoomRepository.findRoomByRoomLinkAndUserId(link, id).isPresent();
+    }
+
+    @Override
+    public void delete(Long id) {
+        userRoomRepository.deleteUserRoomByRoomId(id);
+        Room room = getSingleResultById(id);
+        List<ComponentDTO> components = componentService.getByRoomLink(room.getLink());
+
+        for(ComponentDTO component : components) {
+            componentService.delete(component.getId());
+        }
+
+        super.delete(id);
+    }
 }

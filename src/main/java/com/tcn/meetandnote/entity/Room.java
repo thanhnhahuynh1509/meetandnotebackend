@@ -38,7 +38,7 @@ public class Room {
     @JoinColumn(name = "parent_id")
     private Room parent;
 
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private Set<Room> children = new LinkedHashSet<>();
 
     public Room() {

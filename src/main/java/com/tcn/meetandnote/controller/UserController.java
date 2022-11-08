@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -23,6 +24,10 @@ public class UserController {
     }
 
 
+    @GetMapping("/rooms/{id}")
+    public List<UserDTO> getUsersByRoomId(@PathVariable long id) {
+        return userService.getUsersByRoomId(id);
+    }
 
     @PostMapping("/get-by-token")
     public UserDTO getUserFromToken(@RequestBody String token) {

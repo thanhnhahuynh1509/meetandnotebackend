@@ -62,6 +62,11 @@ public class RoomController {
         return id;
     }
 
+    @GetMapping("/check-user-in-room/{roomLink}/users/{userId}")
+    public boolean checkUserInRoom(@PathVariable String roomLink, @PathVariable long userId) {
+        return roomService.checkUserInRoom(roomLink, userId);
+    }
+
     @PostMapping
     public ResponseEntity<RoomDTO> save(@RequestBody RoomDTO roomDTO) {
         UserDTO userDTO = roomDTO.getUser();
@@ -79,6 +84,21 @@ public class RoomController {
         roomDTO.setType("ROOM");
         roomDTO.setUser(userDTO);
         return new ResponseEntity<>(roomDTO, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{roomId}/users/{email}/{permission}")
+    public String inviteUserRoom(@PathVariable long roomId, @PathVariable String email, @PathVariable String permission) {
+        return roomService.inviteUser(roomId, email, permission);
+    }
+
+    @GetMapping("/link/{link}/users/{userId}")
+    public RoomDTO getRoomOwnerByLinkAndUser(@PathVariable String link, @PathVariable long userId) {
+        return roomService.getRoomOwnerByUserAndLink(link, userId);
+    }
+
+    @GetMapping("/users/{userId}")
+    public List<RoomDTO> getRoomsByUserId(@PathVariable long userId) {
+        return roomService.getRoomByUserId(userId);
     }
 
     @PutMapping("/position/{id}")

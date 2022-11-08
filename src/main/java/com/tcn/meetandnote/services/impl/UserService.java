@@ -1,5 +1,6 @@
 package com.tcn.meetandnote.services.impl;
 
+import com.tcn.meetandnote.dto.RoomDTO;
 import com.tcn.meetandnote.dto.UserDTO;
 import com.tcn.meetandnote.entity.Room;
 import com.tcn.meetandnote.entity.User;
@@ -19,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserService extends BaseService<User, Long> {
@@ -27,7 +30,6 @@ public class UserService extends BaseService<User, Long> {
     private final UserRepository userRepository;
     private final RoomService roomService;
     private final UserRoomService userRoomService;
-
     private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository, RoomService roomService, UserRoomService userRoomService, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
@@ -53,8 +55,15 @@ public class UserService extends BaseService<User, Long> {
         user.setPassword(encodePassword(user.getPassword()));
         user.setRoom(room);
         user = userRepository.save(user);
-//
 
+        // Save room link
+        UserRoom userRoom = new UserRoom();
+        userRoom.setRead(true);
+        userRoom.setFullPermission(true);
+        userRoom.setOwner(true);
+        userRoom.setRoom(room);
+        userRoom.setUser(user);
+        userRoom = userRoomService.save(userRoom);
 
         return modelMapper.map(user, UserDTO.class);
     }
@@ -72,6 +81,19 @@ public class UserService extends BaseService<User, Long> {
         userRoom.setOwner(true);
         userRoomService.save(userRoom);
         return modelMapper.map(user, UserDTO.class);
+    }
+
+    public List<UserDTO> getUsersByRoomId(long roomId) {
+        List<UserDTO> userDTOS = new ArrayList<>();
+        try {
+            List<User> users = userRoomService.getUsersByRoomId(roomId);
+            for(User user : users) {
+                userDTOS.add(modelMapper.map(user, UserDTO.class));
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return userDTOS;
     }
 
     @Override
@@ -123,6 +145,8 @@ public class UserService extends BaseService<User, Long> {
     public User getUserByUsername(String username) {
         return userRepository.findUserByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Email or Password are not correct!"));
     }
+
+
 
     @Override
     public void delete(Long id) {
