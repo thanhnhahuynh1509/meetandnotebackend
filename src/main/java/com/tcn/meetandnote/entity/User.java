@@ -28,6 +28,14 @@ public class User {
     @JoinColumn(name = "room_id")
     private Room room;
 
+    public User() {
+
+    }
+
+    public User(long id) {
+        this.id = id;
+    }
+
     public long getId() {
         return id;
     }

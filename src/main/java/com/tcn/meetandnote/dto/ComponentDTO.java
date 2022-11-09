@@ -18,6 +18,8 @@ public class ComponentDTO {
 
     private AttributeDTO attribute;
 
+    private String createdDate;
+
     public long getId() {
         return id;
     }
@@ -80,5 +82,13 @@ public class ComponentDTO {
 
     public void setAttribute(AttributeDTO attribute) {
         this.attribute = attribute;
+    }
+
+    public String getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
     }
 }

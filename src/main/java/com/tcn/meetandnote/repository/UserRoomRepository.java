@@ -28,8 +28,8 @@ public interface UserRoomRepository extends JpaRepository<UserRoom, Long> {
     @Query("SELECT ur.room FROM UserRoom ur WHERE ur.user.id = ?1")
     List<Room> findRoomsByUserId(long userId);
 
-    @Query("SELECT ur.user FROM UserRoom ur WHERE ur.room.id = ?1")
-    List<User> findUsersByRoomId(long roomId);
+    @Query("SELECT ur FROM UserRoom ur WHERE ur.room.id = ?1")
+    List<UserRoom> findUsersByRoomId(long roomId);
 
     @Transactional
     @Modifying

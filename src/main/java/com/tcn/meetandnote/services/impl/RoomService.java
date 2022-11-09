@@ -2,6 +2,7 @@ package com.tcn.meetandnote.services.impl;
 
 import com.tcn.meetandnote.dto.ComponentDTO;
 import com.tcn.meetandnote.dto.RoomDTO;
+import com.tcn.meetandnote.dto.UserDTO;
 import com.tcn.meetandnote.entity.Room;
 import com.tcn.meetandnote.entity.Type;
 import com.tcn.meetandnote.entity.User;
@@ -69,6 +70,15 @@ public class RoomService extends BaseService<Room, Long> {
         return roomRepository.findByLink(link).orElseThrow(() -> new NotFoundException("Not found room with link: " + link));
     }
 
+    public List<RoomDTO> getRoomByOwner(long userId) {
+        List<Room> rooms = roomRepository.findRoomByOwner(userId);
+        List<RoomDTO> roomDTOS = new ArrayList<>();
+        for(Room room : rooms) {
+            roomDTOS.add(convertDTO(room));
+        }
+        return roomDTOS;
+    }
+
     @Override
     protected Room update(Long id, Room model) {
         return null;
@@ -117,7 +127,7 @@ public class RoomService extends BaseService<Room, Long> {
         try {
             List<Room> rooms = userRoomService.getRoomsByUserId(id);
             for(Room room : rooms) {
-                roomDTOS.add(modelMapper.map(room, RoomDTO.class));
+                roomDTOS.add(convertDTO(room));
             }
         } catch(Exception ex) {
             ex.printStackTrace();
@@ -161,7 +171,8 @@ public class RoomService extends BaseService<Room, Long> {
         Optional<Room> roomOptional = userRoomRepository.findRoomByOwnerAndRoomLinkAndUserId(link, userId);
         if(roomOptional.isEmpty())
             return null;
-        return modelMapper.map(roomOptional.get(), RoomDTO.class);
+
+        return convertDTO(roomOptional.get());
     }
 
     public boolean checkUserInRoom(String link, long id) {
@@ -179,5 +190,16 @@ public class RoomService extends BaseService<Room, Long> {
         }
 
         super.delete(id);
+    }
+
+    public RoomDTO convertDTO(Room room) {
+        RoomDTO roomDTO = modelMapper.map(room, RoomDTO.class);
+        roomDTO.setOwner(modelMapper.map(room.getOwner(), UserDTO.class));
+        if(room.getParent() != null) {
+            roomDTO.setParentId(room.getParent().getId());
+        }
+        roomDTO.setType("ROOM");
+        roomDTO.setUserCreated(modelMapper.map(room.getUserCreated(), UserDTO.class));
+        return roomDTO;
     }
 }

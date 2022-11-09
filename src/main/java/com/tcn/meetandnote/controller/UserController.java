@@ -29,6 +29,11 @@ public class UserController {
         return userService.getUsersByRoomId(id);
     }
 
+    @GetMapping("/{userId}/rooms/{roomId}")
+    public UserDTO getUserByRoomLinkAndUserId(@PathVariable long userId, @PathVariable long roomId) {
+        return userService.getUserByRoomAndUserId(userId, roomId);
+    }
+
     @PostMapping("/get-by-token")
     public UserDTO getUserFromToken(@RequestBody String token) {
         String username = jwtProvider.getUsernameFromToken(token);
@@ -38,6 +43,11 @@ public class UserController {
     @PutMapping("/{id}")
     public UserDTO updateUser(@PathVariable long id, @RequestBody User user) {
         return userService.updateUser(id, user);
+    }
+
+    @PutMapping("/permission/{userId}/rooms/{roomId}")
+    public UserDTO updatePermission(@PathVariable long userId, @PathVariable long roomId) {
+        return userService.updatePermission(userId, roomId);
     }
 
     @PutMapping("/{id}/update-image")

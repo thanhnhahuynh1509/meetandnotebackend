@@ -3,6 +3,7 @@ package com.tcn.meetandnote.controller;
 import com.tcn.meetandnote.dto.RoomDTO;
 import com.tcn.meetandnote.dto.UserDTO;
 import com.tcn.meetandnote.entity.Room;
+import com.tcn.meetandnote.entity.User;
 import com.tcn.meetandnote.entity.UserRoom;
 import com.tcn.meetandnote.services.impl.RoomService;
 import com.tcn.meetandnote.services.impl.UserRoomService;
@@ -34,11 +35,7 @@ public class RoomController {
     @GetMapping("/link/{link}")
     public RoomDTO getRoomByLink(@PathVariable String link) {
         Room room = roomService.getByLink(link);
-        RoomDTO roomDTO = modelMapper.map(room, RoomDTO.class);
-        if(room.getParent() != null) {
-            roomDTO.setParentId(room.getParent().getId());
-        }
-        return roomDTO;
+        return roomService.convertDTO(room);
     }
 
     @GetMapping("/children/{link}")
@@ -46,15 +43,16 @@ public class RoomController {
         Room room = roomService.getByLink(link);
         List<RoomDTO> roomDTOS = new ArrayList<>();
         for(Room r : room.getChildren()) {
-            RoomDTO roomDTO = modelMapper.map(r, RoomDTO.class);
-            roomDTO.setType("ROOM");
-            UserRoom userRoom = userRoomService.getUserRoomOwnerByRoomId(r.getId());
-            UserDTO userDTO = modelMapper.map(userRoom.getUser(), UserDTO.class);
-            roomDTO.setUser(userDTO);
+            RoomDTO roomDTO = roomService.convertDTO(r);
             roomDTOS.add(roomDTO);
         }
         return roomDTOS;
     }
+    @GetMapping("/owner/{userId}")
+    public List<RoomDTO> getRoomsByOwner(@PathVariable long userId) {
+        return roomService.getRoomByOwner(userId);
+    }
+
 
     @GetMapping("/last-id")
     public long getLastID() {
@@ -70,11 +68,17 @@ public class RoomController {
     @PostMapping
     public ResponseEntity<RoomDTO> save(@RequestBody RoomDTO roomDTO) {
         UserDTO userDTO = roomDTO.getUser();
+
+        Room parentRoom = roomService.get(roomDTO.getParentId());
+
         Room room = new Room();
         room.setPosX(roomDTO.getPosX());
         room.setPosY(roomDTO.getPosY());
         room.setParent(new Room(roomDTO.getParentId()));
         room.setTitle("New Room");
+        room.setUserCreated(new User(roomDTO.getUserCreated().getId()));
+        room.setOwner(parentRoom.getOwner());
+
         room = roomService.save(room);
 
         userService.addRoom(room.getId(), roomDTO.getUser().getId());
@@ -83,6 +87,8 @@ public class RoomController {
         roomDTO.setParentId(room.getParent().getId());
         roomDTO.setType("ROOM");
         roomDTO.setUser(userDTO);
+        roomDTO.setOwner(modelMapper.map(room.getOwner(), UserDTO.class));
+        roomDTO.setUserCreated(modelMapper.map(room.getUserCreated(), UserDTO.class));
         return new ResponseEntity<>(roomDTO, HttpStatus.CREATED);
     }
 

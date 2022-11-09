@@ -23,7 +23,7 @@ public class UserRoomService extends BaseService<UserRoom, Long> {
 
     public UserRoom getUserRoomByUserIDAndRoomID(long userId, long roomId) {
         return userRoomRepository.findUserRoomByUserIDAndRoomID(userId, roomId)
-                .orElseThrow(() -> new NotFoundException("Not found user-room"));
+                .orElseGet(() -> null);
     }
 
     public UserRoom getUserRoomOwnerByRoomId(long roomId) {
@@ -35,7 +35,7 @@ public class UserRoomService extends BaseService<UserRoom, Long> {
         return userRoomRepository.findRoomsByUserId(userId);
     }
 
-    public List<User> getUsersByRoomId(long roomId) {
+    public List<UserRoom> getUsersByRoomId(long roomId) {
         return userRoomRepository.findUsersByRoomId(roomId);
     }
 

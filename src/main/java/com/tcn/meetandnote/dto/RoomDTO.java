@@ -1,11 +1,5 @@
 package com.tcn.meetandnote.dto;
 
-import com.tcn.meetandnote.entity.Type;
-
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
 public class RoomDTO {
 
     private long id;
@@ -31,6 +25,12 @@ public class RoomDTO {
     private long parentId;
 
     private UserDTO user;
+
+    private UserDTO owner;
+
+    private UserDTO userCreated;
+
+    private String createdDate;
 
     public long getId() {
         return id;
@@ -126,5 +126,29 @@ public class RoomDTO {
 
     public void setUser(UserDTO user) {
         this.user = user;
+    }
+
+    public UserDTO getOwner() {
+        return owner;
+    }
+
+    public void setOwner(UserDTO owner) {
+        this.owner = owner;
+    }
+
+    public UserDTO getUserCreated() {
+        return userCreated;
+    }
+
+    public void setUserCreated(UserDTO userCreated) {
+        this.userCreated = userCreated;
+    }
+
+    public String getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
     }
 }

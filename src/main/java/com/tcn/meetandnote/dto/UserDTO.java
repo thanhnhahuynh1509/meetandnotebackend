@@ -11,6 +11,8 @@ public class UserDTO {
     private String roomLink;
     private boolean enabled;
 
+    private boolean fullPermission;
+
     public long getId() {
         return id;
     }
@@ -65,5 +67,13 @@ public class UserDTO {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public boolean isFullPermission() {
+        return fullPermission;
+    }
+
+    public void setFullPermission(boolean fullPermission) {
+        this.fullPermission = fullPermission;
     }
 }

@@ -56,6 +56,11 @@ public class UserService extends BaseService<User, Long> {
         user.setRoom(room);
         user = userRepository.save(user);
 
+        //
+        room.setOwner(user);
+        room.setUserCreated(user);
+        room = roomService.save(room);
+
         // Save room link
         UserRoom userRoom = new UserRoom();
         userRoom.setRead(true);
@@ -86,14 +91,23 @@ public class UserService extends BaseService<User, Long> {
     public List<UserDTO> getUsersByRoomId(long roomId) {
         List<UserDTO> userDTOS = new ArrayList<>();
         try {
-            List<User> users = userRoomService.getUsersByRoomId(roomId);
-            for(User user : users) {
-                userDTOS.add(modelMapper.map(user, UserDTO.class));
+            List<UserRoom> userRooms = userRoomService.getUsersByRoomId(roomId);
+            for(UserRoom userRoom : userRooms) {
+                UserDTO userDTO = modelMapper.map(userRoom.getUser(), UserDTO.class);
+                userDTO.setFullPermission(userRoom.isFullPermission());
+                userDTOS.add(userDTO);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         return userDTOS;
+    }
+
+    public UserDTO getUserByRoomAndUserId(long userId, long roomId) {
+        UserRoom userRoom = userRoomService.getUserRoomByUserIDAndRoomID(userId, roomId);
+        UserDTO userDTO = modelMapper.map(userRoom.getUser(), UserDTO.class);
+        userDTO.setFullPermission(userRoom.isFullPermission());
+        return userDTO;
     }
 
     @Override
@@ -107,6 +121,15 @@ public class UserService extends BaseService<User, Long> {
         user.setFirstName(model.getFirstName());
         user.setLastName(model.getLastName());
         return modelMapper.map(userRepository.save(user), UserDTO.class);
+    }
+
+    public UserDTO updatePermission(long userId, long roomId) {
+        UserRoom userRoom = userRoomService.getUserRoomByUserIDAndRoomID(userId, roomId);
+        userRoom.setFullPermission(!userRoom.isFullPermission());
+        userRoomService.update(userRoom.getId(), userRoom);
+        UserDTO userDTO = modelMapper.map(userRoom.getUser(), UserDTO.class);
+        userDTO.setFullPermission(userRoom.isFullPermission());
+        return userDTO;
     }
 
     public UserDTO updateImage(long id, MultipartFile imageFile) {

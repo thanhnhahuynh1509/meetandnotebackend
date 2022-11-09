@@ -1,6 +1,8 @@
 package com.tcn.meetandnote.entity;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Entity
 @Table(name = "components")
@@ -29,6 +31,8 @@ public class Component {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    private String createdDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date());
 
     public long getId() {
         return id;
@@ -84,5 +88,13 @@ public class Component {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
     }
 }

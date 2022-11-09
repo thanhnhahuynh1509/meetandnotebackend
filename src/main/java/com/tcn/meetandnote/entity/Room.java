@@ -1,6 +1,7 @@
 package com.tcn.meetandnote.entity;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Entity
@@ -37,6 +38,16 @@ public class Room {
     @ManyToOne
     @JoinColumn(name = "parent_id")
     private Room parent;
+
+    @OneToOne
+    @JoinColumn(name = "owner_id")
+    private User owner;
+
+    @OneToOne
+    @JoinColumn(name = "user_created_id")
+    private User userCreated;
+
+    private String createdDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date());
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private Set<Room> children = new LinkedHashSet<>();
@@ -151,6 +162,30 @@ public class Room {
 
     public void setPosY(double posY) {
         this.posY = posY;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
+    public User getUserCreated() {
+        return userCreated;
+    }
+
+    public void setUserCreated(User userCreated) {
+        this.userCreated = userCreated;
+    }
+
+    public String getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
     }
 
     @Override
