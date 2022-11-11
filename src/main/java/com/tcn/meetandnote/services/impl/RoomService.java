@@ -167,6 +167,14 @@ public class RoomService extends BaseService<Room, Long> {
         return "OK";
     }
 
+    public String leaveRoom(long roomId, long userId) {
+        UserRoom userRoom = userRoomService.getUserRoomByUserIDAndRoomID(userId, roomId);
+        if(userRoom == null)
+            return "NOT OK";
+        userRoomService.delete(userRoom.getId());
+        return "OK";
+    }
+
     public RoomDTO getRoomOwnerByUserAndLink(String link, long userId) {
         Optional<Room> roomOptional = userRoomRepository.findRoomByOwnerAndRoomLinkAndUserId(link, userId);
         if(roomOptional.isEmpty())

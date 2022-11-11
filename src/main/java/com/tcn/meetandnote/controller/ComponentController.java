@@ -48,6 +48,8 @@ public class ComponentController {
     }
 
 
+
+
     @PutMapping("/position/{id}")
     public ComponentDTO updatePosition(@PathVariable long id, @RequestBody ComponentDTO componentDTO) {
         return componentService.updatePosition(id, componentDTO);

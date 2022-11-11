@@ -97,6 +97,11 @@ public class RoomController {
         return roomService.inviteUser(roomId, email, permission);
     }
 
+    @DeleteMapping("/{roomId}/leave/{userId}")
+    public String leaveRoom(@PathVariable long roomId, @PathVariable long userId) {
+        return roomService.leaveRoom(roomId, userId);
+    }
+
     @GetMapping("/link/{link}/users/{userId}")
     public RoomDTO getRoomOwnerByLinkAndUser(@PathVariable String link, @PathVariable long userId) {
         return roomService.getRoomOwnerByUserAndLink(link, userId);

@@ -12,6 +12,7 @@ public class Attribute {
     private long id;
     private String color;
     private String title;
+    @Column(columnDefinition = "TEXT")
     private String content;
     @Column(name = "file_type")
     private String fileType;

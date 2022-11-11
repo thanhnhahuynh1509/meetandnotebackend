@@ -1,8 +1,12 @@
 package com.tcn.meetandnote.utils;
 
+import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -51,6 +55,7 @@ public class FileUploadUtils {
         }
         return false;
     }
+
 
 
 }
