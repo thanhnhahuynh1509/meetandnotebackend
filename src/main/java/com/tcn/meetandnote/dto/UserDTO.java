@@ -10,6 +10,7 @@ public class UserDTO {
 
     private String roomLink;
     private boolean enabled;
+    private String verifyToken;
 
     private boolean fullPermission;
 
@@ -67,6 +68,14 @@ public class UserDTO {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getVerifyToken() {
+        return verifyToken;
+    }
+
+    public void setVerifyToken(String verifyToken) {
+        this.verifyToken = verifyToken;
     }
 
     public boolean isFullPermission() {

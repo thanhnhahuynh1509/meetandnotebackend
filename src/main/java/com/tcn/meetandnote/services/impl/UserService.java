@@ -10,6 +10,7 @@ import com.tcn.meetandnote.exception.NotFoundException;
 import com.tcn.meetandnote.repository.UserRepository;
 import com.tcn.meetandnote.services.BaseService;
 import com.tcn.meetandnote.utils.FileUploadUtils;
+import com.tcn.meetandnote.utils.MD5Hashing;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +48,16 @@ public class UserService extends BaseService<User, Long> {
             throw new ConflictException("Email has already use. Please enter another email");
         }
 
+        LocalDateTime localDateTime = LocalDateTime.now();
+        String builder = "" +
+                localDateTime.getDayOfYear() +
+                localDateTime.getMonthValue() +
+                localDateTime.getYear() +
+                localDateTime.getHour() +
+                localDateTime.getMinute() +
+                localDateTime.getSecond() +
+                localDateTime.getNano();
+
         // Save room
         Room room = new Room();
         room.setTitle("Home");
@@ -54,6 +66,7 @@ public class UserService extends BaseService<User, Long> {
         // Save user
         user.setPassword(encodePassword(user.getPassword()));
         user.setRoom(room);
+        user.setVerifyToken(MD5Hashing.hash(builder));
         user = userRepository.save(user);
 
         //
@@ -169,7 +182,17 @@ public class UserService extends BaseService<User, Long> {
         return userRepository.findUserByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Email or Password are not correct!"));
     }
 
+    public User getUserByVerifyToken(String token) {
+        return userRepository.findUserByVerifyToken(token)
+                .orElseThrow(() -> new UsernameNotFoundException("Not found user with this token!"));
+    }
 
+    public User enabledUser(long id) {
+        User user = getSingleResultById(id);
+        user.setVerifyToken("");
+        user.setEnabled(true);
+        return userRepository.save(user);
+    }
 
     @Override
     public void delete(Long id) {

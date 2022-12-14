@@ -21,6 +21,7 @@ public class User {
     private String lastName;
     private String address;
     private boolean enabled = false;
+    private String verifyToken;
     @Column(columnDefinition="TEXT")
     private String avatar = "";
 
@@ -82,6 +83,14 @@ public class User {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getVerifyToken() {
+        return verifyToken;
+    }
+
+    public void setVerifyToken(String verifyToken) {
+        this.verifyToken = verifyToken;
     }
 
     public String getAvatar() {

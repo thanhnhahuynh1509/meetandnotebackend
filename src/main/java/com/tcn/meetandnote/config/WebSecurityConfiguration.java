@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.Collections;
@@ -38,6 +39,7 @@ public class WebSecurityConfiguration {
                 .csrf().disable().authorizeRequests()
                 .antMatchers("/sign-in/**").permitAll()
                 .antMatchers("/sign-up/**").permitAll()
+                .antMatchers("/verify/**").permitAll()
                 .antMatchers("/assets/**").permitAll()
                 .antMatchers("/ws/**").permitAll()
                 .anyRequest().authenticated()
